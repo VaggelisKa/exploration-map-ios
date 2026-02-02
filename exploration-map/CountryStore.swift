@@ -6,7 +6,6 @@ import SwiftUI
 enum CountryStatus: String, Codable, CaseIterable, Identifiable {
     case none
     case visited
-    case lived
     case wantToVisit
 
     var id: String { rawValue }
@@ -16,9 +15,7 @@ enum CountryStatus: String, Codable, CaseIterable, Identifiable {
         case .none:
             return "Not set"
         case .visited:
-            return "Visited"
-        case .lived:
-            return "Lived"
+            return "Visited or lived"
         case .wantToVisit:
             return "Want to visit"
         }
@@ -29,8 +26,6 @@ enum CountryStatus: String, Codable, CaseIterable, Identifiable {
         case .none:
             return UIColor.systemGray
         case .visited:
-            return UIColor.systemGreen
-        case .lived:
             return UIColor.systemBlue
         case .wantToVisit:
             return UIColor.systemOrange
@@ -85,21 +80,13 @@ final class CountryStore {
         statuses.values.filter { $0 == .visited }.count
     }
 
-    var livedCount: Int {
-        statuses.values.filter { $0 == .lived }.count
-    }
-
     var wantToVisitCount: Int {
         statuses.values.filter { $0 == .wantToVisit }.count
     }
 
-    var visitedOrLivedCount: Int {
-        statuses.values.filter { $0 == .visited || $0 == .lived }.count
-    }
-
     var visitedPercentage: Double {
         guard totalCountries > 0 else { return 0 }
-        return Double(visitedOrLivedCount) / Double(totalCountries)
+        return Double(visitedCount) / Double(totalCountries)
     }
 
     /// Per-continent stats (percentage visited) sorted by continent name.
@@ -108,7 +95,7 @@ final class CountryStore {
         for (countryId, continent) in countryContinents {
             let c = continent.isEmpty ? "Other" : continent
             let current = byContinent[c] ?? (0, 0)
-            let isVisited = statuses[countryId] == .visited || statuses[countryId] == .lived
+            let isVisited = statuses[countryId] == .visited
             byContinent[c] = (current.total + 1, current.visited + (isVisited ? 1 : 0))
         }
         return byContinent
@@ -151,8 +138,6 @@ final class CountryStore {
         case .none:
             return UIColor.systemGray.withAlphaComponent(0.08)
         case .visited:
-            return UIColor.systemGreen.withAlphaComponent(0.45)
-        case .lived:
             return UIColor.systemBlue.withAlphaComponent(0.45)
         case .wantToVisit:
             return UIColor.systemOrange.withAlphaComponent(0.45)
@@ -164,8 +149,6 @@ final class CountryStore {
         case .none:
             return UIColor.systemGray.withAlphaComponent(0.35)
         case .visited:
-            return UIColor.systemGreen.withAlphaComponent(0.9)
-        case .lived:
             return UIColor.systemBlue.withAlphaComponent(0.9)
         case .wantToVisit:
             return UIColor.systemOrange.withAlphaComponent(0.9)
@@ -217,7 +200,16 @@ final class CountryStore {
 
     private func loadStatuses() {
         guard let data = UserDefaults.standard.data(forKey: defaultsKey) else { return }
-        if let decoded = try? JSONDecoder().decode([String: CountryStatus].self, from: data) {
+        // Decode as raw strings so we can migrate old "lived" to "visited"
+        guard let raw = try? JSONDecoder().decode([String: String].self, from: data) else { return }
+        var decoded: [String: CountryStatus] = [:]
+        for (id, rawValue) in raw {
+            let status: CountryStatus = rawValue == "lived" ? .visited : (CountryStatus(rawValue: rawValue) ?? .none)
+            if status != .none || rawValue == "lived" {
+                decoded[id] = status
+            }
+        }
+        if !decoded.isEmpty {
             statuses = decoded
             bumpRevision()
         }

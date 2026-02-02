@@ -37,14 +37,12 @@ struct StatsView: View {
                 VStack(spacing: 0) {
                     StatRow(title: "Countries", value: "\(store.totalCountries)")
                     Divider()
-                    StatRow(title: "Visited", value: "\(store.visitedCount)")
-                    Divider()
-                    StatRow(title: "Lived", value: "\(store.livedCount)")
+                    StatRow(title: "Visited or lived", value: "\(store.visitedCount)")
                     Divider()
                     StatRow(title: "Want to visit", value: "\(store.wantToVisitCount)")
                     Divider()
                     StatRow(
-                        title: "World visited",
+                        title: "World visited or lived",
                         value: String(format: "%.1f%%", store.visitedPercentage * 100.0)
                     )
                     ForEach(store.continentStats) { stat in
@@ -66,8 +64,7 @@ struct StatsView: View {
         .animation(.easeInOut(duration: 0.25), value: isExpanded)
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .glassEffect(in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .onChange(of: isExpanded) { _, newValue in
             UserDefaults.standard.set(newValue, forKey: statsExpandedKey)
         }
