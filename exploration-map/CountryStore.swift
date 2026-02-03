@@ -89,7 +89,7 @@ final class CountryStore {
         return Double(visitedCount) / Double(totalCountries)
     }
 
-    /// Per-continent stats (percentage visited) sorted by continent name.
+    /// Per-continent stats (percentage visited), excluding continents with 0 visited, sorted by percentage descending.
     var continentStats: [ContinentStat] {
         var byContinent: [String: (total: Int, visited: Int)] = [:]
         for (countryId, continent) in countryContinents {
@@ -100,7 +100,8 @@ final class CountryStore {
         }
         return byContinent
             .map { ContinentStat(id: $0.key, name: $0.key, total: $0.value.total, visitedOrLived: $0.value.visited) }
-            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+            .filter { $0.visitedOrLived > 0 }
+            .sorted { $0.percentage > $1.percentage }
     }
 
     func displayName(for countryId: String) -> String {
