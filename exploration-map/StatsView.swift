@@ -1,15 +1,14 @@
 import SwiftUI
 
-private let statsExpandedKey = "StatsExpanded"
+let statsExpandedKey = "StatsExpanded"
 
 struct StatsView: View {
     var store: CountryStore
-    @State private var isExpanded: Bool
-    @State private var hasLoadedFromStorage = false
+    @Binding var isExpanded: Bool
 
-    init(store: CountryStore) {
+    init(store: CountryStore, isExpanded: Binding<Bool>) {
         self.store = store
-        _isExpanded = State(initialValue: UserDefaults.standard.bool(forKey: statsExpandedKey))
+        _isExpanded = isExpanded
     }
 
     var body: some View {
@@ -39,8 +38,6 @@ struct StatsView: View {
                         StatRow(title: "Countries", value: "\(store.totalCountries)")
                     StatDivider()
                     StatRow(title: "Visited or lived", value: "\(store.visitedCount)")
-                    StatDivider()
-                    StatRow(title: "Want to visit", value: "\(store.wantToVisitCount)")
                     StatDivider()
                     StatRow(
                         title: "World visited or lived",
@@ -100,5 +97,5 @@ private struct StatRow: View {
 }
 
 #Preview {
-    StatsView(store: CountryStore())
+    StatsView(store: CountryStore(), isExpanded: .constant(true))
 }

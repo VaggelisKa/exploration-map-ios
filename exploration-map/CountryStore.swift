@@ -84,6 +84,14 @@ final class CountryStore {
         statuses.values.filter { $0 == .wantToVisit }.count
     }
 
+    /// Country IDs marked "want to visit", sorted by display name.
+    var wantToVisitCountryIds: [String] {
+        statuses
+            .filter { $0.value == .wantToVisit }
+            .map(\.key)
+            .sorted { displayName(for: $0).localizedCaseInsensitiveCompare(displayName(for: $1)) == .orderedAscending }
+    }
+
     var visitedPercentage: Double {
         guard totalCountries > 0 else { return 0 }
         return Double(visitedCount) / Double(totalCountries)
