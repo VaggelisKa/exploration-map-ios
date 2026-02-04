@@ -10,12 +10,19 @@ struct CountryDescriptionSheet: View {
     var store: CountryStore
     @Environment(\.dismiss) private var dismiss
     @State private var selectedDetent: PresentationDetent = .large
+    @State private var aiInsights: TravelInsights?
+    @State private var isLoadingInsights = false
+    @State private var insightsError: String?
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     headerSection
+
+                    if TravelInsightsService.isAvailable {
+                        travelInsightsSection
+                    }
 
                     if let desc = CountryDescriptionsLoader.description(for: selection.id) {
                         descriptionSection(title: "Overview", text: desc.overview)
@@ -65,6 +72,85 @@ struct CountryDescriptionSheet: View {
         }
         .presentationDetents([.medium, .large], selection: $selectedDetent)
         .presentationDragIndicator(.visible)
+        .onAppear {
+            if TravelInsightsService.isAvailable {
+                Task { await loadInsights() }
+            }
+        }
+    }
+
+    @MainActor
+    private func loadInsights() async {
+        isLoadingInsights = true
+        insightsError = nil
+        defer { isLoadingInsights = false }
+        do {
+            aiInsights = try await TravelInsightsService.generateInsights(for: selection.name)
+        } catch {
+            insightsError = error.localizedDescription
+        }
+    }
+
+    @ViewBuilder
+    private var travelInsightsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text("Travel insights")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            if isLoadingInsights {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Getting travel tips…")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            } else if let error = insightsError {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(error)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Button("Try again") {
+                        Task { await loadInsights() }
+                    }
+                    .font(.subheadline.weight(.medium))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            } else if let insights = aiInsights {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        InsightCard(
+                            title: "Best time to visit",
+                            systemImage: "calendar.badge.clock",
+                            text: insights.bestTimeToVisit
+                        )
+                        InsightCard(
+                            title: "Getting there",
+                            systemImage: "airplane",
+                            text: insights.gettingThere
+                        )
+                        InsightCard(
+                            title: "What to know",
+                            systemImage: "newspaper",
+                            text: insights.whatToKnow
+                        )
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
     }
 
     private var headerSection: some View {
@@ -97,6 +183,33 @@ struct CountryDescriptionSheet: View {
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+    }
+}
+
+private struct InsightCard: View {
+    let title: String
+    let systemImage: String
+    let text: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: systemImage)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.secondary)
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+            }
+            Text(text)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(width: 260, alignment: .topLeading)
+        .padding(16)
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 
