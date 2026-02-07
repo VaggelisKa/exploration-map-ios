@@ -62,10 +62,9 @@ struct WantToVisitListView: View {
                     EditButton()
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        dismiss()
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
                     }
-                    .fontWeight(.semibold)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)

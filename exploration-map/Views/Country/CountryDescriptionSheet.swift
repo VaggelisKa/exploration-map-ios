@@ -61,10 +61,9 @@ struct CountryDescriptionSheet: View {
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Done") {
-                        dismiss()
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
                     }
-                    .fontWeight(.semibold)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)

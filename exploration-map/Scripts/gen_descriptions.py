@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate country_descriptions.json from inline data."""
 import json
+import os
 
 # Country ID -> (overview, knownFor, quickHistory)
 DATA = {
@@ -184,6 +185,8 @@ DATA = {
 }
 
 out = {k: {"overview": v[0], "knownFor": v[1], "quickHistory": v[2]} for k, v in DATA.items()}
-with open("country_descriptions.json", "w", encoding="utf-8") as f:
+script_dir = os.path.dirname(os.path.abspath(__file__))
+output_path = os.path.join(script_dir, "..", "Data", "country_descriptions.json")
+with open(output_path, "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False, indent=2)
 print("Wrote", len(out), "countries")

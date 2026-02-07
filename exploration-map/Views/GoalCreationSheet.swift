@@ -76,7 +76,9 @@ struct GoalCreationSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
+                    }
                 }
                 if selectedTab == .newGoal {
                     ToolbarItem(placement: .confirmationAction) {
@@ -370,7 +372,9 @@ private struct CountryGoalPickerSheet: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { dismiss() }
+                        Button { dismiss() } label: {
+                            Image(systemName: "xmark")
+                        }
                     }
                 }
         }

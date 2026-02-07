@@ -50,11 +50,12 @@ struct CountryStatusSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Done") {
+                    Button {
                         store.updateStatus(pendingStatus, for: selection.id)
                         dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
                     }
-                    .fontWeight(.semibold)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
