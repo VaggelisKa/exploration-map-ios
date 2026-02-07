@@ -8,12 +8,14 @@ import SwiftUI
 struct MapScreen: View {
     var store: CountryStore
     var goalStore: GoalStore
+    var settingsStore: SettingsStore
     @State private var selectedCountry: CountrySelection?
     @State private var showingWantToVisitList = false
     @State private var showingGoalCreation = false
     @State private var isStatsExpanded = UserDefaults.standard.bool(forKey: statsExpandedKey)
     @State private var showingShareFormatDialog = false
     @State private var isGeneratingShare = false
+    @State private var showingSettings = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -50,6 +52,24 @@ struct MapScreen: View {
                     ))
 
                     HStack(spacing: 12) {
+                        GlassEffectContainer {
+                            Button {
+                                showingSettings = true
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "gearshape.fill")
+                                        .font(.subheadline.weight(.medium))
+                                    Text("Settings")
+                                        .font(.subheadline.weight(.medium))
+                                        .lineLimit(1)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        }
                         GlassEffectContainer {
                             Button {
                                 showingShareFormatDialog = true
@@ -119,6 +139,9 @@ struct MapScreen: View {
         .sheet(isPresented: $showingGoalCreation) {
             GoalCreationSheet(store: store, goalStore: goalStore)
         }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(settingsStore: settingsStore)
+        }
         .environment(store)
         .onAppear {
             store.onDataChanged = { writeWidgetGoalsSnapshot(countryStore: store, goalStore: goalStore) }
@@ -152,5 +175,5 @@ struct MapScreen: View {
 }
 
 #Preview {
-    MapScreen(store: CountryStore(), goalStore: GoalStore())
+    MapScreen(store: CountryStore(), goalStore: GoalStore(), settingsStore: SettingsStore())
 }

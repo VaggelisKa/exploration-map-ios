@@ -11,12 +11,13 @@ import SwiftUI
 struct exploration_mapApp: App {
     @State private var store = CountryStore()
     @State private var goalStore = GoalStore()
+    @State private var settingsStore = SettingsStore()
     @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
             ZStack {
-                MapScreen(store: store, goalStore: goalStore)
+                MapScreen(store: store, goalStore: goalStore, settingsStore: settingsStore)
                     .opacity(showSplash ? 0 : 1)
 
                 if showSplash {
@@ -25,6 +26,7 @@ struct exploration_mapApp: App {
                         .zIndex(1)
                 }
             }
+            .preferredColorScheme(settingsStore.theme.resolvedColorScheme)
             .animation(.easeInOut(duration: 0.5), value: showSplash)
             .onAppear {
                 Task { @MainActor in
