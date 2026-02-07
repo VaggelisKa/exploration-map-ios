@@ -1,15 +1,7 @@
-//
-//  ShareSheet.swift
-//  exploration-map
-//
-
 import SwiftUI
 import UIKit
 
-/// Presents the system share sheet from the key window (no SwiftUI sheet), so the system preview works correctly.
 enum SharePresenter {
-    /// Presents UIActivityViewController with the given items from the key window's top view controller.
-    /// Call from MainActor. `onComplete` is called when the user dismisses the share sheet.
     static func present(activityItems: [Any], onComplete: @escaping () -> Void) {
         guard let windowScene = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })

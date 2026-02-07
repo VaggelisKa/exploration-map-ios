@@ -1,21 +1,9 @@
-//
-//  WidgetGoalsSnapshot.swift
-//  exploration-map
-//
-//  Snapshot and writer for the goals widget. The widget extension
-//  reads from the same App Group key.
-//
-
 import Foundation
 import WidgetKit
 
-/// UserDefaults key for the encoded goals snapshot.
 let widgetGoalsSnapshotKey = "WidgetGoalsSnapshot"
-
-/// Widget kind for reloadTimelines(ofKind:).
 let explorationMapGoalsWidgetKind = "ExplorationMapGoalsWidget"
 
-/// Single goal entry for the widget (display-only).
 struct WidgetGoalEntry: Codable {
     var label: String
     var progressDescription: String
@@ -24,12 +12,10 @@ struct WidgetGoalEntry: Codable {
     var customTitle: String?
 }
 
-/// Snapshot of goals with progress, written by the app and read by the widget.
 struct WidgetGoalsSnapshot: Codable {
     var goals: [WidgetGoalEntry]
 }
 
-/// Builds and writes the goals snapshot to the App Group and reloads the goals widget.
 func writeWidgetGoalsSnapshot(countryStore: CountryStore, goalStore: GoalStore) {
     let entries = goalStore.goals.map { goal -> WidgetGoalEntry in
         let (progressDescription, isComplete): (String, Bool) = {

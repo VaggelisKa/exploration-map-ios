@@ -58,19 +58,15 @@ struct ContinentStat: Identifiable {
 final class CountryStore {
     private(set) var overlays: [MKPolygon] = []
     private(set) var countryNames: [String: String] = [:]
-    /// ISO 3166-1 alpha-2 (e.g. "US") for flag emoji.
     private(set) var countryCodes: [String: String] = [:]
-    /// Continent name per country (e.g. "Africa", "Europe").
     private(set) var countryContinents: [String: String] = [:]
     private(set) var revision: Int = 0
     var statuses: [String: CountryStatus] = [:]
-    /// Ordered IDs for "want to visit" (priority order); persisted.
     var wantToVisitOrder: [String] = []
 
     private let defaultsKey = "CountryStatusById"
     private let wantToVisitOrderKey = "WantToVisitOrder"
 
-    /// Called after statuses or want-to-visit order are saved (e.g. to refresh goals widget).
     var onDataChanged: (() -> Void)?
 
     init() {
@@ -92,7 +88,6 @@ final class CountryStore {
         statuses.values.filter { $0 == .wantToVisit }.count
     }
 
-    /// Country IDs marked "want to visit", in user-defined priority order (persisted). New items appended at end, sorted by name.
     var wantToVisitCountryIds: [String] {
         let wantIds = Set(statuses.filter { $0.value == .wantToVisit }.map(\.key))
         let ordered = wantToVisitOrder.filter { wantIds.contains($0) }
@@ -105,7 +100,6 @@ final class CountryStore {
         return Double(visitedCount) / Double(totalCountries)
     }
 
-    /// Per-continent stats (percentage visited), excluding continents with 0 visited, sorted by percentage descending.
     var continentStats: [ContinentStat] {
         var byContinent: [String: (total: Int, visited: Int)] = [:]
         for (countryId, continent) in countryContinents {
@@ -124,7 +118,6 @@ final class CountryStore {
         countryNames[countryId] ?? countryId
     }
 
-    /// Returns the country's flag emoji (e.g. 🇺🇸) from its ISO alpha-2 code, or empty string.
     func flagEmoji(for countryId: String) -> String {
         let code = countryCodes[countryId] ?? countryCodes[countryId.uppercased()]
             ?? Self.alpha3ToAlpha2[countryId] ?? Self.alpha3ToAlpha2[countryId.uppercased()]
@@ -137,7 +130,6 @@ final class CountryStore {
         }.map(String.init).joined()
     }
 
-    /// Fallback when GeoJSON has ISO_A2 = -99; key = ISO 3166-1 alpha-3, value = alpha-2.
     private static let alpha3ToAlpha2: [String: String] = [
         "FRA": "FR", "NOR": "NO", "KOS": "XK"
     ]

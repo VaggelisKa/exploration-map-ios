@@ -1,8 +1,3 @@
-//
-//  SettingsStore.swift
-//  exploration-map
-//
-
 import Foundation
 import Observation
 import SwiftUI

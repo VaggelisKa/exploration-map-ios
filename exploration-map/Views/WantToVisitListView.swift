@@ -1,8 +1,3 @@
-//
-//  WantToVisitListView.swift
-//  exploration-map
-//
-
 import SwiftUI
 
 struct WantToVisitListView: View {

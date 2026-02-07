@@ -1,10 +1,3 @@
-//
-//  ExplorationMapWidget.swift
-//  ExplorationMapWidget
-//
-//  Stats widget; reads snapshot from App Group (written by main app).
-//
-
 import SwiftUI
 import WidgetKit
 

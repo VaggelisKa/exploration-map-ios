@@ -1,8 +1,3 @@
-//
-//  CountryDescriptions.swift
-//  exploration-map
-//
-
 import Foundation
 
 struct CountryDescription: Codable {

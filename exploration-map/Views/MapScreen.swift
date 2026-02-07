@@ -1,8 +1,3 @@
-//
-//  MapScreen.swift
-//  exploration-map
-//
-
 import SwiftUI
 
 struct MapScreen: View {

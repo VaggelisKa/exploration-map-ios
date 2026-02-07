@@ -74,6 +74,7 @@ struct CountryMapView: UIViewRepresentable {
                 if polygonContains(mapPoint, in: polygon) {
                     let countryId = polygon.title ?? "Unknown"
                     let name = parent.store.displayName(for: countryId)
+                    Haptics.mediumImpact()
                     parent.selectedCountry = CountrySelection(id: countryId, name: name)
                     return
                 }

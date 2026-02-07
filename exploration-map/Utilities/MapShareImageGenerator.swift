@@ -1,8 +1,3 @@
-//
-//  MapShareImageGenerator.swift
-//  exploration-map
-//
-
 import MapKit
 import UIKit
 
@@ -16,7 +11,6 @@ enum MapShareImageGenerator {
     private static let scale: CGFloat = 2
     private static let statsBarHeight: CGFloat = 160
 
-    /// Renders the map with colored country overlays and stats into a shareable image.
     @MainActor
     static func generate(store: CountryStore) async -> UIImage? {
         let options = MKMapSnapshotter.Options()
@@ -41,7 +35,6 @@ enum MapShareImageGenerator {
         }
     }
 
-    /// Renders the same map + stats into a PDF and returns a temporary file URL (caller may delete after sharing).
     @MainActor
     static func generatePDF(store: CountryStore) async -> URL? {
         guard let image = await generate(store: store) else { return nil }
@@ -139,7 +132,6 @@ enum MapShareImageGenerator {
         center.alignment = .center
         let lineSpacing: CGFloat = 6
 
-        // Title: "Exploration map"
         let titleFont = UIFont.systemFont(ofSize: 22, weight: .semibold)
         let titleAttrs: [NSAttributedString.Key: Any] = [
             .font: titleFont,
@@ -149,7 +141,6 @@ enum MapShareImageGenerator {
         let title = "Exploration map"
         let titleSize = (title as NSString).size(withAttributes: titleAttrs)
 
-        // Main stats: "X visited · Y% of world · Z want to visit"
         let mainFont = UIFont.systemFont(ofSize: 18, weight: .medium)
         let mainAttrs: [NSAttributedString.Key: Any] = [
             .font: mainFont,
@@ -159,7 +150,6 @@ enum MapShareImageGenerator {
         let mainText = "\(store.visitedCount) visited · \(String(format: "%.1f", store.visitedPercentage * 100))% of world · \(store.wantToVisitCount) want to visit"
         let mainSize = (mainText as NSString).size(withAttributes: mainAttrs)
 
-        // Secondary: total countries
         let subFont = UIFont.systemFont(ofSize: 16, weight: .regular)
         let subAttrs: [NSAttributedString.Key: Any] = [
             .font: subFont,
@@ -169,7 +159,6 @@ enum MapShareImageGenerator {
         let subText = "\(store.totalCountries) countries total"
         let subSize = (subText as NSString).size(withAttributes: subAttrs)
 
-        // Continent breakdown (same as StatsView: only continents with visited > 0, sorted by % desc)
         let continentParts = store.continentStats.map { "\($0.name) \(String(format: "%.1f", $0.percentage * 100))%" }
         let continentText = continentParts.joined(separator: " · ")
         let continentFont = UIFont.systemFont(ofSize: 14, weight: .regular)

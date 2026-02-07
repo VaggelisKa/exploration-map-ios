@@ -15,6 +15,7 @@ struct StatsView: View {
         GlassEffectContainer {
             VStack(alignment: .leading, spacing: 0) {
                 Button {
+                    Haptics.lightImpact()
                     withAnimation(.easeInOut(duration: 0.25)) {
                         isExpanded.toggle()
                     }

@@ -1,10 +1,3 @@
-//
-//  exploration_mapApp.swift
-//  exploration-map
-//
-//  Created by Vaggelis Karavasileiadis on 2/2/26.
-//
-
 import SwiftUI
 
 @main

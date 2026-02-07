@@ -1,8 +1,3 @@
-//
-//  Goal.swift
-//  exploration-map
-//
-
 import Foundation
 import Observation
 

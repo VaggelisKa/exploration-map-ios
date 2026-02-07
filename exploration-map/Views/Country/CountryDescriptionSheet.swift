@@ -1,8 +1,3 @@
-//
-//  CountryDescriptionSheet.swift
-//  exploration-map
-//
-
 import SwiftUI
 
 struct CountryDescriptionSheet: View {

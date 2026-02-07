@@ -1,8 +1,3 @@
-//
-//  GoalCreationSheet.swift
-//  exploration-map
-//
-
 import SwiftUI
 
 struct GoalCreationSheet: View {

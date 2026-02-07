@@ -1,8 +1,3 @@
-//
-//  SettingsView.swift
-//  exploration-map
-//
-
 import SwiftUI
 
 struct SettingsView: View {

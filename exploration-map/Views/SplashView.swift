@@ -1,8 +1,3 @@
-//
-//  SplashView.swift
-//  exploration-map
-//
-
 import SwiftUI
 
 struct SplashView: View {
